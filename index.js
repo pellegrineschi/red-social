@@ -28,6 +28,16 @@ app.get("/ruta-prueba", (req, res)=>{
     )
 });
 
+//importar rutas
+const userRoutes = require("./routes/user");
+const publicationRoutes = require("./routes/publication");
+const followRoutes = require("./routes/follow");
+
+//configurar rutas
+app.use("/api", userRoutes);
+app.use("/api", publicationRoutes);
+app.use("/api", followRoutes);       
+
 //poner el servidor a escuchar peticiones http
 app.listen(port, ()=>{
     console.log("servidor corriendo en el puerto " + port);
