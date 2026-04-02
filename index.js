@@ -34,9 +34,9 @@ const publicationRoutes = require("./routes/publication");
 const followRoutes = require("./routes/follow");
 
 //configurar rutas
-app.use("/api", userRoutes);
-app.use("/api", publicationRoutes);
-app.use("/api", followRoutes);       
+app.use("/api/user", userRoutes);
+app.use("/api/publication", publicationRoutes);
+app.use("/api/follow", followRoutes);       
 
 //poner el servidor a escuchar peticiones http
 app.listen(port, ()=>{

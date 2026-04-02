@@ -7,6 +7,14 @@ const pruebaUser = (req, res) =>{
     )
 };
 
+// registro de usuarios
+const register = (req, res) => {
+    return res.status(200).json({
+        message: "accion de registro de usuario"
+    })
+}
+
 module.exports = {
-    pruebaUser
+    pruebaUser,
+    register
 }
