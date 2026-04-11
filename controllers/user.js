@@ -1,6 +1,11 @@
 //importar dependencias y modulos
 const bcrypt = require("bcrypt");
+
+//importar modelo de usuario
 const User = require("../models/user");
+
+//importar servicios de jwt
+const jwt = require("../services/jwt");
 
 // acciones de prueba
 const pruebaUser = (req, res) => {
@@ -66,7 +71,69 @@ const register = async (req, res) => {
   }
 };
 
+// login de usuarios
+const login = async (req, res) => {
+  //recoger los datos de la peticion
+  let params = req.body;
+
+  //validar los datos
+  if (!params.email || !params.password) {
+    return res.status(400).send({
+      status: "error",
+      message: "faltan datos por enviar",
+    });
+  }
+
+  // buscar en la BD si existe el usuario
+  try {
+    const user = await User.findOne({
+      email: params.email.toLowerCase(),
+    })
+      //.select({password: 0})
+      .exec();
+
+    if (!user) {
+      return res.status(400).send({
+        status: "error",
+        message: "el usuario no existe",
+      });
+    }
+
+    //comprobar la contraseña
+    const validPassword = bcrypt.compareSync(params.password, user.password);
+
+    if (!validPassword) {
+      return res.status(400).send({
+        status: "error",
+        message: "contraseña incorecta",
+      });
+    }
+
+    //generar el token de JWT
+      const token = jwt.createToken(user)
+
+    //devolver datos de usuario
+    return res.status(200).send({
+      status: "success",
+      message: "accion de login corecta",
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        nick: user.nick,
+      },
+      token: token
+    });
+  } catch (err) {
+    return res.status(500).send({
+      status: "error",
+      message: "error en la consulta de usuario",
+    });
+  }
+};
+
 module.exports = {
   pruebaUser,
   register,
+  login,
 };
