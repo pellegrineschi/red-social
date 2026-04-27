@@ -3,9 +3,6 @@ const connection = require ("./database/connection");
 const express = require("express");
 const cors = require("cors");
 
-//conexion a la base de datos
-connection();
-
 //crear servidor node
 const app = express();
 const port = 3900;
@@ -38,7 +35,17 @@ app.use("/api/user", userRoutes);
 app.use("/api/publication", publicationRoutes);
 app.use("/api/follow", followRoutes);       
 
-//poner el servidor a escuchar peticiones http
-app.listen(port, ()=>{
-    console.log("servidor corriendo en el puerto " + port);
-});
+//iniciar API solo cuando MongoDB este disponible
+const startServer = async () => {
+  try {
+    await connection();
+    app.listen(port, () => {
+      console.log("servidor corriendo en el puerto " + port);
+    });
+  } catch (error) {
+    console.error(error.message);
+    process.exit(1);
+  }
+};
+
+startServer();

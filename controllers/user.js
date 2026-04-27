@@ -11,6 +11,7 @@ const jwt = require("../services/jwt");
 const pruebaUser = (req, res) => {
   return res.status(200).send({
     message: "mensaja enviado desde el controlador de usuario",
+    usuario: req.user,
   });
 };
 
