@@ -166,9 +166,25 @@ const profile = async (req, res) =>{
 
 }
 
+const list = async (req, res) =>{
+  try{
+    return res.status(200).send({
+      status: "success",
+      message: "listado de usuarios"
+    })
+    
+  }catch(error){
+    return res.status(500).send({
+      status: "error",
+      message: "error en la consulta de usuarios"
+    })
+  }
+}
+
 module.exports = {
   pruebaUser,
   register,
   login,
-  profile
+  profile,
+  list
 };
