@@ -133,8 +133,42 @@ const login = async (req, res) => {
   }
 };
 
+const profile = async (req, res) =>{
+
+  // recibir el id del usuario identificado por la url
+  const id = req.user.id;
+
+  try{
+    //consultar para sacar los datos del usuario
+    const user = await User.findById(id).select("-password -rol").exec();
+
+    if(!user){
+      return res.status(404).send({
+        status: "error",
+        message: "usuario no encontrado"
+      })
+    }
+    
+    //devolver los datos
+    return res.status(200).send({
+      status: "success",
+      user: user
+    })
+
+
+  }catch(error){
+    return res.status(500).send({
+      status: "error",
+      message: "error en la consulta de usuario"
+    })
+
+  }
+
+}
+
 module.exports = {
   pruebaUser,
   register,
   login,
+  profile
 };
