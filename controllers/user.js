@@ -111,7 +111,7 @@ const login = async (req, res) => {
     }
 
     //generar el token de JWT
-      const token = jwt.createToken(user)
+    const token = jwt.createToken(user);
 
     //devolver datos de usuario
     return res.status(200).send({
@@ -123,7 +123,7 @@ const login = async (req, res) => {
         email: user.email,
         nick: user.nick,
       },
-      token: token
+      token: token,
     });
   } catch (err) {
     return res.status(500).send({
@@ -133,58 +133,82 @@ const login = async (req, res) => {
   }
 };
 
-const profile = async (req, res) =>{
-
+const profile = async (req, res) => {
   // recibir el id del usuario identificado por la url
   const id = req.user.id;
 
-  try{
+  try {
     //consultar para sacar los datos del usuario
     const user = await User.findById(id).select("-password -rol").exec();
 
-    if(!user){
+    if (!user) {
       return res.status(404).send({
         status: "error",
-        message: "usuario no encontrado"
-      })
+        message: "usuario no encontrado",
+      });
     }
-    
+
     //devolver los datos
     return res.status(200).send({
       status: "success",
-      user: user
-    })
-
-
-  }catch(error){
+      user: user,
+    });
+  } catch (error) {
     return res.status(500).send({
       status: "error",
-      message: "error en la consulta de usuario"
-    })
-
+      message: "error en la consulta de usuario",
+    });
   }
+};
 
-}
+const list = async (req, res) => {
+  try {
+    //controlar en que pagina estamos
+    let page = 1;
+    if (req.params.page) {
+      page = req.params.page;
+    }
+    page = parseInt(page);
 
-const list = async (req, res) =>{
-  try{
+    //consultar con mongoose pagination
+    let itemsPerPage = 1;
+
+    const result = await User.paginate(
+      {},
+      {
+        page: page,
+        limit: itemsPerPage,
+        sort: { _id: 1 },
+      }
+    );
+
+    if (!result.docs || result.docs.length === 0) {
+      return res.status(404).send({
+        status: "error",
+        message: "no hay usuarios disponibles",
+      });
+    }
+
     return res.status(200).send({
       status: "success",
-      message: "listado de usuarios"
-    })
-    
-  }catch(error){
+      users: result.docs,
+      page: result.page,
+      itemsPerPage: result.limit,
+      total: result.totalDocs,
+      pages: result.totalPages,
+    });
+  } catch (error) {
     return res.status(500).send({
       status: "error",
-      message: "error en la consulta de usuarios"
-    })
+      message: "error en la consulta de usuarios",
+    });
   }
-}
+};
 
 module.exports = {
   pruebaUser,
   register,
   login,
   profile,
-  list
+  list,
 };

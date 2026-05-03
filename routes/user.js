@@ -11,5 +11,6 @@ router.get("/profile/:id", check.auth, userController.profile);
 router.get("/list", check.auth, userController.list);
 router.get("/list/:page", check.auth, userController.list);
 
+
 // exportar router
 module.exports = router;

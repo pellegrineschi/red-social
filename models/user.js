@@ -1,4 +1,5 @@
-const {Schema, model} = require("mongoose");
+const { Schema, model } = require("mongoose");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const userSchema = Schema({
     name: {
@@ -30,6 +31,11 @@ const userSchema = Schema({
         type: Date,
         default: Date.now
     }
-})
+});
 
-module.exports = model("User", userSchema, "users");
+userSchema.plugin(mongoosePaginate);
+
+/** @type {import("mongoose").Model<any>} */
+const User = model("User", userSchema, "users");
+
+module.exports = User;
