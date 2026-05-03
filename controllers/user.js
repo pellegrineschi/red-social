@@ -53,10 +53,13 @@ const register = async (req, res) => {
     //guardar usuario en la base de datos
     try {
       const userStored = await user_to_save.save();
+      const { password, rol, ...userWithoutSensitiveData } =
+        userStored.toObject();
+
       return res.status(200).json({
         status: "success",
         message: "registro de usuario exitoso",
-        user: userStored,
+        user: userWithoutSensitiveData,
       });
     } catch (err) {
       return res.status(500).json({
